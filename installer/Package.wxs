@@ -5,7 +5,7 @@
 	<Package
 		Name="Password Generator"
 		Manufacturer="Meraj Esmaeili"
-		Version="1.0.1"
+		Version="1.0.2"
 		UpgradeCode="4A89D973-8515-4F8F-A5E0-A8B06378175B"
 		Scope="perMachine">
 
