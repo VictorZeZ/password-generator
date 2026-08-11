@@ -55,7 +55,7 @@ namespace password_generator
             WriteOption("-n, --numbers", "Include numbers (0-9)");
             WriteOption("-s, --special", "Include special characters (!@#$%^&*)");
             WriteOption("-a, --all", "Include all character types (default behavior)");
-            WriteOption("-c, --count <num>", "Generate multiple passwords (default: 1, max: 10)");
+            WriteOption("-c, --count <num>", "Generate multiple passwords (default: 1, max: 32)");
             Console.WriteLine();
 
             WriteSection("EXAMPLES");
@@ -80,6 +80,8 @@ namespace password_generator
             bool includeNumbers = false;
             bool includeSpecial = false;
             int count = 1;
+            bool countClamped = false;
+            int requestedCount = 0;
 
             for (int i = 1; i < args.Length; i++)
             {
@@ -117,7 +119,9 @@ namespace password_generator
                     case "--count":
                         if (i + 1 < args.Length && int.TryParse(args[i + 1], out int cnt))
                         {
-                            count = Math.Clamp(cnt, 1, 10);
+                            requestedCount = cnt;
+                            if (cnt > 32) countClamped = true;
+                            count = Math.Clamp(cnt, 1, 32);
                             i++;
                         }
                         break;
@@ -130,6 +134,10 @@ namespace password_generator
             }
 
             WriteBanner();
+            if (countClamped)
+            {
+                WriteLineColor($"Maximum allowed count is 32. Generating 32 passwords instead of {requestedCount}.", Yellow);
+            }
             Console.WriteLine($"{Dim}Generating {Reset}{Bold}{count}{Reset}{Dim} password(s), length {Reset}{Bold}{length}{Reset}{Dim}.{Reset}");
             Console.WriteLine();
 
