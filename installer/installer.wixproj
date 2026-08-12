@@ -1,0 +1,31 @@
+<Project Sdk="WixToolset.Sdk/7.0.0">
+
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+
+    <!-- Overridden from scripts\build-installer.ps1 with the version read
+         from password-generator.csproj, so the MSI version always matches
+         the application version. -->
+    <Version Condition="'$(Version)' == ''">1.0.0</Version>
+
+    <!-- Produces artifacts\installer\pg-setup-<version>.msi -->
+    <OutputName>pg-setup-$(Version)</OutputName>
+
+    <!-- Folder containing the published, self-contained pg.exe.
+         Passed in from the build script; defaults to a local publish
+         folder so `dotnet build` still works standalone during authoring. -->
+    <PublishDir Condition="'$(PublishDir)' == ''">$(MSBuildProjectDirectory)\..\artifacts\publish</PublishDir>
+    <DefineConstants>PublishDir=$(PublishDir);Version=$(Version)</DefineConstants>
+
+    <!-- Suite/company metadata surfaced in Add/Remove Programs -->
+    <Manufacturer>Meraj Esmaeili</Manufacturer>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Standard WixUI dialog set: welcome, license agreement, install
+         directory picker, progress, and finish dialogs. -->
+    <PackageReference Include="WixToolset.UI.wixext" Version="7.0.0" />
+  </ItemGroup>
+
+</Project>
