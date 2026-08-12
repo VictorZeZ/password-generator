@@ -4,6 +4,14 @@
     <OutputType>Package</OutputType>
     <Platform>x64</Platform>
 
+    <!--
+      WiX v7 refuses to build (error WIX7015) until the Open Source
+      Maintenance Fee EULA is explicitly accepted. This is free for
+      personal/open-source use; organizations generating revenue are asked
+      to pay a maintenance fee. See: https://www.firegiant.com/osmf/
+    -->
+    <AcceptEula>wix7</AcceptEula>
+
     <!-- Overridden from scripts\build-installer.ps1 with the version read
          from password-generator.csproj, so the MSI version always matches
          the application version. -->

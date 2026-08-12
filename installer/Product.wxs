@@ -27,8 +27,9 @@
 
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
-    <!-- Add/Remove Programs polish -->
-    <Property Id="ARPNOMODIFY" Value="1" />
+    <!-- Add/Remove Programs polish.
+         (ARPNOMODIFY is already defined by WixUI_InstallDir below, so it's
+         not repeated here — declaring it twice is a build error.) -->
     <Property Id="ARPHELPLINK" Value="https://github.com/your-org/password-generator" />
     <Property Id="ARPURLINFOABOUT" Value="https://github.com/your-org/password-generator" />
 
@@ -52,11 +53,35 @@
                        Action="set"
                        System="yes" />
         </Component>
+
+        <!--
+          A double-clickable uninstaller inside the install folder itself.
+          It just triggers the real Windows Installer uninstall for this
+          product, so everything MSI tracked (files, the PATH entry,
+          registry data, the Add/Remove Programs entry) is removed the
+          same way "Settings > Apps > Uninstall" would remove it.
+        -->
+        <Component Id="UninstallShortcut" Guid="*">
+          <Shortcut Id="UninstallShortcutFile"
+                    Name="Uninstall Password Generator"
+                    Target="[System64Folder]msiexec.exe"
+                    Arguments="/x [ProductCode]"
+                    WorkingDirectory="INSTALLFOLDER"
+                    Description="Uninstall Password Generator" />
+          <RemoveFolder Id="RemoveInstallFolderOnUninstall" On="uninstall" />
+          <RegistryValue Root="HKLM"
+                          Key="Software\Password Generator"
+                          Name="Installed"
+                          Type="integer"
+                          Value="1"
+                          KeyPath="yes" />
+        </Component>
       </Directory>
     </StandardDirectory>
 
     <Feature Id="MainFeature" Title="Password Generator" Level="1">
       <ComponentRef Id="ApplicationExecutable" />
+      <ComponentRef Id="UninstallShortcut" />
     </Feature>
 
     <!-- Graphical wizard: Welcome -> License Agreement -> Install Folder -> Progress -> Finish -->
