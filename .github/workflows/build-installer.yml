@@ -116,11 +116,18 @@ jobs:
       - name: Publish GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
         run: |
           set -euo pipefail
 
-          gh release create "${{ github.ref_name }}" \
-            release-assets/* \
-            --verify-tag \
-            --title "Password Generator ${{ github.ref_name }}" \
-            --generate-notes
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists. Replacing existing assets..."
+            gh release upload "$TAG" release-assets/* --clobber
+          else
+            echo "Creating release $TAG..."
+            gh release create "$TAG" \
+              release-assets/* \
+              --verify-tag \
+              --title "Password Generator $TAG" \
+              --generate-notes
+          fi
