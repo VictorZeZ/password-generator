@@ -12,26 +12,14 @@
 
     <SummaryInformation Description="Password Generator Setup" Manufacturer="Meraj Esmaeili" />
 
-    <!--
-      Same UpgradeCode across every release lets Windows Installer recognize
-      an existing install of any older version.
-      - Newer MSI over older install  -> silently uninstalls the old files
-        first, then installs the new ones (a "major upgrade").
-      - Older MSI over a newer install -> blocked, with the message below.
-      Do not change UpgradeCode in future releases, or upgrade detection
-      breaks and both versions can end up installed side by side.
-    -->
     <MajorUpgrade
       DowngradeErrorMessage="A newer version of [ProductName] is already installed. Setup will now exit."
       Schedule="afterInstallInitialize" />
 
     <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
 
-    <!-- Add/Remove Programs polish.
-         (ARPNOMODIFY is already defined by WixUI_InstallDir below, so it's
-         not repeated here — declaring it twice is a build error.) -->
-    <Property Id="ARPHELPLINK" Value="https://github.com/your-org/password-generator" />
-    <Property Id="ARPURLINFOABOUT" Value="https://github.com/your-org/password-generator" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/VictorZeZ/password-generator" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/VictorZeZ/password-generator" />
 
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="Password Generator">
@@ -40,11 +28,6 @@
                 Source="$(var.PublishDir)\pg.exe"
                 KeyPath="yes" />
 
-          <!--
-            Adds the install folder to the machine PATH so a freshly opened
-            PowerShell or Command Prompt window can run `pg` with no extra
-            setup. Removed automatically on uninstall.
-          -->
           <Environment Id="AddInstallFolderToPath"
                        Name="PATH"
                        Value="[INSTALLFOLDER]"
@@ -54,13 +37,6 @@
                        System="yes" />
         </Component>
 
-        <!--
-          A double-clickable uninstaller inside the install folder itself.
-          It just triggers the real Windows Installer uninstall for this
-          product, so everything MSI tracked (files, the PATH entry,
-          registry data, the Add/Remove Programs entry) is removed the
-          same way "Settings > Apps > Uninstall" would remove it.
-        -->
         <Component Id="UninstallShortcut" Guid="*">
           <Shortcut Id="UninstallShortcutFile"
                     Name="Uninstall Password Generator"
@@ -84,7 +60,6 @@
       <ComponentRef Id="UninstallShortcut" />
     </Feature>
 
-    <!-- Graphical wizard: Welcome -> License Agreement -> Install Folder -> Progress -> Finish -->
     <ui:WixUI Id="WixUI_InstallDir" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
